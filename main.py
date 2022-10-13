@@ -2,21 +2,22 @@ from http.client import HTTPException
 import re
 from threading import stack_size
 from urllib import response
-from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
 app = FastAPI()
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 async def root():
-    pass
+    return {}
+
 
 #https://stageapi.glovoapp.com/webhook/stores/{storeId}/orders/{orderId}/status
-@app.put("/webhook/stores/{storeId}/orders/{orderId}/status",  response_class= Response)
-async def update_order(storeId:int, orderId:int, status:Request):
-    order = await status.json()
+@app.put("/webhook/stores/{storeId}/orders/{orderId}/status")
+async def update_order(storeId:int, orderId:int, request:Request):
+    order = await request.json()
     try:
-        if str(order["status"]).upper() in ("ACCEPTED", "READY_FOR_PICKUP", "OUT_FOR_DELIVERY","PICKED_UP_BY_CUSTOMER" ):
+        if str(order["status"]).upper() in ("ACCEPTED", "READY_FOR_PICKUP", "OUT_FOR_DELIVERY","PICKED_UP_BY_CUSTOMER"):
             return JSONResponse(content=None, status_code=204)
         else:
             raise
@@ -32,9 +33,8 @@ async def update_order(storeId:int, orderId:int, status:Request):
 
 # https://stageapi.glovoapp.com/webhook/stores/{storeId}/orders/{orderId}/replace_products
 @app.post("/webhook/stores/{storeId}/orders/{orderId}/replace_products")
-async def modify_order(storeId:int, orderId:int, status:Request):
-    order = await status.json()
-    # print(order)
+async def modify_order(storeId:int, orderId:int, request:Request):
+    order = await request.json()
     try:
         check_list = lambda some_list: isinstance(some_list, list)
         if "replacements" in order and "removed_purchases" in order and "added_products" in order and check_list(order["replacements"]) and check_list(order["removed_purchases"])and check_list(order["added_products"]):
@@ -143,7 +143,7 @@ async def modify_order(storeId:int, orderId:int, status:Request):
         else:
             raise 
     except:
-        raise HTTPException(status_code=400, detail= {
+        raise HTTPException(status_code=400, detail={
                 "userInfo": { },
                 "code": "189654",
                 "requestId": "4568100530282487425",
@@ -151,3 +151,4 @@ async def modify_order(storeId:int, orderId:int, status:Request):
                 "message": "There was a problem with your request.",
                 "staticCode": 0
                 })
+
