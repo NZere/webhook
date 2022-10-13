@@ -36,8 +36,8 @@ async def modify_order(storeId:int, orderId:int, status:Request):
     order = await status.json()
     # print(order)
     try:
-        if "replacements" in order:
-            print("HEREE")
+        check_list = lambda some_list: isinstance(some_list, list)
+        if "replacements" in order and "removed_purchases" in order and "added_products" in order and check_list(order["replacements"]) and check_list(order["removed_purchases"])and check_list(order["added_products"]):
             return JSONResponse(status_code=200, content={
                 "order_id": "12345",
                 "store_id": "your-store-id",

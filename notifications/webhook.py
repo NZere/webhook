@@ -118,3 +118,8 @@ def order_cancelled(url:str):
   }
   r = requests.post(url, data=data, headers={'Content-type': 'application/json'})
   return JSONResponse(content=None, status_code=200) if r.status_code==200 else None
+
+
+
+inp=input()
+print(order_dispatched(inp))
