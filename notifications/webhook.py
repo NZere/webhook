@@ -1,6 +1,10 @@
 import requests
 import json
 from fastapi.responses import JSONResponse
+from fastapi import Depends
+# from fastapi.security import 
+
+# oauth2_scheme=O
 
 def order_dispatched(url:str):
   data={
@@ -120,5 +124,7 @@ def order_cancelled(url:str):
   r = requests.post(url, data=data, headers={'Content-type': 'application/json'})
   return JSONResponse(content=None, status_code=200) if r.status_code==200 else None
 
-inp = input()
-print(order_dispatched(inp))
+url = "https://webhook.site/88d825cd-ee99-4806-b67e-6a14a4021018"
+print(order_dispatched(url))
+print(order_cancelled(url))
+# https://webhook.site/88d825cd-ee99-4806-b67e-6a14a4021018
